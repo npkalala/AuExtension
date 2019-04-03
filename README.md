@@ -13,7 +13,7 @@ This common module/extension that you can use.
   - Util
   - VoiceControl (Adjust Window PC Volume)
 
-# The Steps to use it
+# The 3 way to use it
 
   - 1. Git Clone the project and build the project. Then add the project to your reference.
   - 2. Download the related dll file and add them to your reference.
