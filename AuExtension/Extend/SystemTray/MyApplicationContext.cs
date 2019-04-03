@@ -1,0 +1,161 @@
+﻿using AuExtension.Extend.HotKeys;
+using AuExtension;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+// add Reference PresentationFramework
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Linq;
+using System.IO;
+
+namespace AuExtension.Extend.SystemTray
+{
+    public class MyApplicationContext : ApplicationContext
+    {
+        //Component declarations
+        private NotifyIcon _trayIcon;
+        private ContextMenuStrip _trayIconContextMenu;
+        private HotKey hotkeys;
+
+        public MyApplicationContext()
+        {
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+            InitializeComponent();
+            _trayIcon.Visible = true;
+        }
+
+        private void InitializeComponent()
+        {
+            _trayIcon = new NotifyIcon();
+            _trayIcon.BalloonTipIcon = ToolTipIcon.Info;
+            //_trayIcon.BalloonTipText = "I noticed that you double-clicked me! What can I do for you?";
+            //_trayIcon.BalloonTipTitle = "This is AuExtension";
+            //_trayIcon.Text = "AuExtension";
+
+            //The icon is added to the project resources. Here I assume that the name of the file is '_trayIcon.ico'
+            //_trayIcon.Icon = new Icon(AppDomain.CurrentDomain.BaseDirectory + "\\Icon\\start_ico.ico");
+
+            //// RegisterHotKey
+            //hotkeys = new HotKey();
+            //hotkeys.RegisterCombo(1001, (int)Keys.F7);
+            //hotkeys.RegisterCombo(1002, (int)Keys.F1);
+            //hotkeys.HotkeyPressed += Hotkeys_HotkeyPressed;
+
+            //Optional - handle doubleclicks on the icon:
+            _trayIcon.DoubleClick += TrayIconDoubleClick;
+
+            //Optional - Add a context menu to the _trayIcon:
+            _trayIconContextMenu = new ContextMenuStrip();
+
+            this._trayIconContextMenu.Name = "_trayIconContextMenu";
+            this._trayIconContextMenu.Size = new Size(153, 70 * 8);
+
+            _trayIconContextMenu.ResumeLayout(false);
+
+            _trayIcon.ContextMenuStrip = _trayIconContextMenu;
+        }
+
+        private List<TooltipItem> _dtToolSet = new List<TooltipItem>();
+
+        public bool SetIcon(string iconPath)
+        {
+            try
+            {
+                if (!File.Exists(iconPath))
+                    return false;
+                _trayIcon.Icon = new Icon(iconPath);
+                return true;
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return false;
+        }
+
+        public void SetTitle(string balloonTipText, string balloonTipTitle, string Text)
+        {
+            _trayIcon.BalloonTipText = balloonTipText;
+            _trayIcon.BalloonTipTitle = balloonTipTitle;
+            _trayIcon.Text = Text;
+        }
+        private List<HotKeyItem> _lsHotKey = new List<HotKeyItem>();
+        public void RegisterHotKey(List<HotKeyItem> lsHotKeys)
+        {
+            _lsHotKey = lsHotKeys;
+            // RegisterHotKey
+            hotkeys = new HotKey();
+            foreach(var dr in lsHotKeys)
+            {
+                hotkeys.RegisterCombo(dr.Id, (int)dr.Key);
+            }
+            hotkeys.HotkeyPressed += Hotkeys_HotkeyPressed;
+        }
+
+        public void LoadItems(List<TooltipItem> lsTooltips)
+        {
+            _dtToolSet = lsTooltips;
+            List<ToolStripMenuItem> lsMenuItems = new List<ToolStripMenuItem>();
+            foreach (TooltipItem r in lsTooltips)
+            {
+                var item = new ToolStripMenuItem();
+
+                item.Name = "_" + r.Title;
+                item.Size = new Size(152, 22);
+                item.Text = r.Title;
+                item.Click += Item_Click;
+                lsMenuItems.Add(item);
+            }
+
+            this._trayIconContextMenu.Items.AddRange(lsMenuItems.ToArray());
+            _trayIconContextMenu.ResumeLayout(false);
+        }
+
+
+
+        private void Item_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem item = (ToolStripMenuItem)sender;
+                var row = _dtToolSet.Where(t => t.Title.Equals(item.Text)).FirstOrDefault();
+                if (!row.IsNullOrEmpty())
+                    row.Click();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private async void Hotkeys_HotkeyPressed(int ID)
+        {
+            var row = _lsHotKey.Where(t => t.Id.Equals(ID)).FirstOrDefault();
+            if (!row.IsNullOrEmpty())
+                row.PressEvent();
+        }
+
+        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            try
+            {
+                //hotkeys.Dispose();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        internal void TrayIconDoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                _trayIcon.ShowBalloonTip(10000);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+    }
+}
