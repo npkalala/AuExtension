@@ -1,5 +1,5 @@
 # AuExtension
-# A Simple Sample of Connect to AWSIoT with C#
+# An Simple Tookit for C# window form/WPF #
 
 This common module/extension that you can use.
 
