@@ -68,8 +68,11 @@
     <Compile Include="Extend\HotKeys\HotKeyItem.cs" />
     <Compile Include="Extend\HttpExtension\HttpExt.cs" />
     <Compile Include="Extend\HttpExtension\IHttpExt.cs" />
+    <Compile Include="Extend\Log\Log.cs" />
+    <Compile Include="Extend\Log\SqlLog.cs" />
     <Compile Include="Extend\NetWork\NetworkStatus.cs" />
     <Compile Include="Extend\NetWork\NetworkStatusChangedArgs.cs" />
+    <Compile Include="Extend\SysExt.cs" />
     <Compile Include="Extend\SystemTray\MyApplicationContext.cs" />
     <Compile Include="Extend\SystemTray\TooltipItem.cs" />
     <Compile Include="Extend\Util\SysUtil.cs" />

@@ -15,6 +15,8 @@ using AuExtension.Extend.VoiceControl;
 using AuExtension.Extend.Util;
 using AuExtension.Extend.HttpExtension;
 using AuExtension.Extend.Brightness;
+using System.Reflection;
+using AuExtension.Extend.Log;
 
 /*
   Remark : Need import Lib CoreAudioApi
@@ -55,6 +57,11 @@ namespace Sample
         [STAThread]
         private static void Main(string[] args)
         {
+            #region Test
+            Log.WriteLine("Log");
+            SqlLog.WriteLine("SqlLog");
+            #endregion
+
             // 1. SystemExt
             Sample_SystemExt();
 
